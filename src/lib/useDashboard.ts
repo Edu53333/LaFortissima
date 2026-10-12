@@ -15,7 +15,13 @@ export function useDashboard() {
   const [shifts, setShifts] = useState<WorkShift[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SHIFTS);
-      return saved ? JSON.parse(saved) : SEED_SHIFTS;
+      if (saved) {
+        const parsed: WorkShift[] = JSON.parse(saved);
+        const filtered = parsed.filter(s => !s.id.startsWith("seed-"));
+        if (filtered.length === 0) return SEED_SHIFTS;
+        return filtered;
+      }
+      return SEED_SHIFTS;
     } catch {
       return SEED_SHIFTS;
     }
